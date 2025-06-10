@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Gate;
 use App\Models\Chirp;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -35,4 +36,16 @@ class ChirpController extends Controller
         return redirect(route('chirps.index'));
     }
 
+    public function update(Request $request, Chirp $chirp): RedirectResponse
+    {
+        Gate::authorize('update', $chirp);
+
+        $validated = $request->validate([
+            'message' => 'required|string|max:255',
+        ]);
+
+        $chirp->update($validated);
+
+        return redirect(route('chirps.index'));
+    }
 }
